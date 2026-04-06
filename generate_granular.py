@@ -23,7 +23,7 @@ import os
 # 配置
 # ========================================
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "公共建筑碳排放计算表_精细化版.xlsx")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "templates", "公共建筑碳排放计算表_精细化版.xlsx")
 
 # ========================================
 # 样式系统

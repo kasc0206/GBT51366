@@ -17,7 +17,7 @@ from docx.oxml import parse_xml
 import os
 
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, "公共建筑碳排放计算报告.docx")
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, "templates", "公共建筑碳排放计算报告.docx")
 
 
 def add_styled_table(doc, headers, rows, col_widths=None):

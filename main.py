@@ -106,8 +106,9 @@ def main():
 
     # 同步模式
     if args.sync:
-        excel_path = os.path.join(output_dir, "公共建筑碳排放计算表_精细化版.xlsx")
-        word_path = os.path.join(output_dir, "公共建筑碳排放计算报告.docx")
+        templates_dir = os.path.join(output_dir, "templates")
+        excel_path = os.path.join(templates_dir, "公共建筑碳排放计算表_精细化版.xlsx")
+        word_path = os.path.join(templates_dir, "公共建筑碳排放计算报告.docx")
         output_path = args.output or os.path.join(output_dir, "公共建筑碳排放计算报告_生成版.docx")
 
         if not os.path.exists(excel_path):
