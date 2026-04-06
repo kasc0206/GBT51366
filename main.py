@@ -88,6 +88,8 @@ def main():
     )
     parser.add_argument("--regenerate", action="store_true",
                        help="重新生成精细化Excel计算表格")
+    parser.add_argument("--word", action="store_true",
+                       help="生成Word报告模板")
     parser.add_argument("--sync", action="store_true",
                        help="同步Excel数据到Word")
     parser.add_argument("--example", action="store_true",
@@ -96,6 +98,11 @@ def main():
 
     args = parser.parse_args()
     output_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Word模板模式
+    if args.word:
+        run_script("generate_word_template.py", "生成Word报告模板")
+        return
 
     # 同步模式
     if args.sync:
