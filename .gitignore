@@ -16,5 +16,5 @@ env/
 Thumbs.db
 
 # 生成的报告文件
-公共建筑碳排放计算报告_生成版.docx
-templates/*_生成版.docx
+*生成版.docx
+*生成版.xlsx
