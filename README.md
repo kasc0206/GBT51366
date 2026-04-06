@@ -37,13 +37,23 @@ python main.py
 
 生成 `公共建筑碳排放计算表_精细化版.xlsx`，包含39个独立计算单元。
 
-### 3. 同步数据到Word
+### 3. 生成Word报告模板
+
+```bash
+python main.py --word
+```
+
+生成 `公共建筑碳排放计算报告.docx`，包含12个章节，与Excel数据联动。
+
+### 4. 同步Excel数据到Word
+
+填写Excel数据后，执行同步：
 
 ```bash
 python main.py --sync
 ```
 
-将Excel中的数据自动同步到Word报告模板。
+将Excel中的数据自动同步到Word报告，生成 `公共建筑碳排放计算报告_生成版.docx`。
 
 ---
 
@@ -201,7 +211,15 @@ python main.py
 
 生成 `公共建筑碳排放计算表_精细化版.xlsx`
 
-### 第二步：填写基础数据
+### 第二步：生成Word模板
+
+```bash
+python main.py --word
+```
+
+生成 `公共建筑碳排放计算报告.docx`
+
+### 第三步：填写基础数据
 
 打开Excel，填写以下黄色单元格：
 
