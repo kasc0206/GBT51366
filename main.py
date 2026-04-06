@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-公共建筑碳排放计算报告系统 - 统一入口
+公共建筑碳排放计算报告系统 - 精细化版
+
+入口脚本，用于生成和管理精细化计算单元（39个独立工作表）。
 
 用法:
-    python main.py                  # 生成所有文件
-    python main.py --excel          # 仅生成Excel
-    python main.py --word           # 仅生成Word
-    python main.py --vba            # 仅生成VBA宏代码
-    python main.py --all            # 生成所有文件（默认）
+    python main.py                  # 生成精细化Excel
+    python main.py --regenerate     # 重新生成
+    python main.py --sync           # 同步Excel数据到Word
+    python main.py --example        # 运行同步示例
 """
 
 import os
@@ -23,13 +24,13 @@ def run_script(script_name, description):
     if not os.path.exists(script_path):
         print(f"⚠️  脚本不存在: {script_name}")
         return False
-    
+
     print(f"\n{'='*60}")
     print(f"📝 {description}")
     print(f"{'='*60}")
-    
+
     try:
-        result = subprocess.run([sys.executable, script_path], 
+        result = subprocess.run([sys.executable, script_path],
                               capture_output=False, text=True)
         return result.returncode == 0
     except Exception as e:
@@ -40,11 +41,11 @@ def run_script(script_name, description):
 def sync_excel_word(excel_path, word_path, output_path):
     """Excel-Word 同步（OpenXML方式）"""
     from sync import SyncManager, SyncConfig, CellMapping
-    
+
     print(f"\n{'='*60}")
     print("🔄 同步 Excel → Word (OpenXML)")
     print(f"{'='*60}")
-    
+
     try:
         config = SyncConfig(default_sheet_name="项目基本信息")
         config.mappings = [
@@ -57,11 +58,11 @@ def sync_excel_word(excel_path, word_path, output_path):
             CellMapping("D19", "年用气量"),
             CellMapping("D20", "年用热量"),
         ]
-        
+
         sync = SyncManager(config)
         sync.load_excel(excel_path)
         sync.load_word(word_path)
-        
+
         stats = sync.sync_excel_to_word(output_path)
         print(f"✅ 同步完成:")
         print(f"   单元格同步: {stats['cells_synced']} 个")
@@ -74,76 +75,59 @@ def sync_excel_word(excel_path, word_path, output_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="公共建筑碳排放计算报告系统")
-    parser.add_argument("--excel", action="store_true", help="仅生成Excel计算表格")
-    parser.add_argument("--word", action="store_true", help="仅生成Word报告模板")
-    parser.add_argument("--vba", action="store_true", help="仅生成VBA宏代码")
-    parser.add_argument("--sync", action="store_true", help="同步Excel数据到Word")
-    parser.add_argument("--all", action="store_true", help="生成所有文件（默认）")
+    parser = argparse.ArgumentParser(
+        description="公共建筑碳排放计算报告系统 - 精细化版（39个独立计算单元）",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+示例:
+    python main.py                  # 生成精细化Excel
+    python main.py --regenerate     # 重新生成Excel
+    python main.py --sync           # 同步Excel数据到Word
+    python main.py --example        # 运行同步示例
+        """
+    )
+    parser.add_argument("--regenerate", action="store_true",
+                       help="重新生成精细化Excel计算表格")
+    parser.add_argument("--sync", action="store_true",
+                       help="同步Excel数据到Word")
+    parser.add_argument("--example", action="store_true",
+                       help="运行同步示例")
     parser.add_argument("--output", "-o", help="同步输出文件路径")
-    
+
     args = parser.parse_args()
-    
     output_dir = os.path.dirname(os.path.abspath(__file__))
-    
+
     # 同步模式
     if args.sync:
-        excel_path = os.path.join(output_dir, "公共建筑碳排放计算表.xlsx")
+        excel_path = os.path.join(output_dir, "公共建筑碳排放计算表_精细化版.xlsx")
         word_path = os.path.join(output_dir, "公共建筑碳排放计算报告.docx")
         output_path = args.output or os.path.join(output_dir, "公共建筑碳排放计算报告_生成版.docx")
-        
+
+        if not os.path.exists(excel_path):
+            print(f"⚠️  精细化Excel不存在，正在生成...")
+            run_script("generate_granular.py", "生成精细化Excel")
+
+        if not os.path.exists(word_path):
+            print(f"❌ Word模板不存在: {word_path}")
+            return
+
         sync_excel_word(excel_path, word_path, output_path)
         return
-    
-    # 如果没有指定任何参数，默认生成所有
-    if not any([args.excel, args.word, args.vba, args.all]):
-        args.all = True
-    
-    success_count = 0
-    total_count = 0
-    
-    if args.excel or args.all:
-        total_count += 1
-        if run_script("generate_excel.py", "生成Excel计算表格"):
-            success_count += 1
-    
-    if args.word or args.all:
-        total_count += 1
-        if run_script("generate_word.py", "生成Word报告模板"):
-            success_count += 1
-    
-    if args.vba or args.all:
-        total_count += 1
-        if run_script("create_vba_macros.py", "生成VBA宏代码"):
-            success_count += 1
-    
-    # 打印总结
+
+    # 示例模式
+    if args.example:
+        run_script("example_sync.py", "运行同步示例")
+        return
+
+    # 默认：生成精细化Excel
+    run_script("generate_granular.py", "生成精细化计算单元Excel")
+
     print(f"\n{'='*60}")
-    print(f"🎉 生成完成！成功 {success_count}/{total_count}")
+    print("💡 使用说明:")
+    print(f"   python main.py --sync     # 同步数据到Word")
+    print(f"   python main.py --example  # 运行同步示例")
+    print(f"   python main.py -h         # 查看帮助")
     print(f"{'='*60}")
-    
-    # 列出生成的文件
-    output_dir = os.path.dirname(os.path.abspath(__file__))
-    output_files = [
-        "公共建筑碳排放计算表.xlsx",
-        "公共建筑碳排放计算报告.docx",
-        "Excel_Word_Sync_Macros.bas",
-    ]
-    
-    print("\n📁 生成的文件:")
-    for filename in output_files:
-        filepath = os.path.join(output_dir, filename)
-        if os.path.exists(filepath):
-            size = os.path.getsize(filepath)
-            print(f"   ✅ {filename} ({size/1024:.1f} KB)")
-        else:
-            print(f"   ❌ {filename} (未生成)")
-    
-    print(f"\n💡 使用说明:")
-    print(f"   1. 打开 Excel 文件并填写黄色单元格")
-    print(f"   2. 同步数据到 Word: python main.py --sync")
-    print(f"   3. 或使用 VBA 宏（需要 Excel 启用宏）")
-    print(f"   4. 查看 README.md 获取详细说明")
 
 
 if __name__ == "__main__":

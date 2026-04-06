@@ -2,33 +2,18 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-*.egg-info/
-dist/
-build/
-.eggs/
-*.egg
 
 # 虚拟环境
 venv/
 env/
-ENV/
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# 临时文件
-*.tmp
-*.log
-
-# 生成的报告文件（可选，根据需要取消注释）
-# 公共建筑碳排放计算报告_生成版.docx
-# 公共建筑碳排放计算表_精细化版.xlsx
+# 生成的报告文件
+公共建筑碳排放计算报告_生成版.docx
